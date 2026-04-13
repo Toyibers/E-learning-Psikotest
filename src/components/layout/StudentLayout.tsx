@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { getCurrentUser, setCurrentUser } from '@/src/lib/store';
 import { useEffect } from 'react';
-import { LogOut, BookOpen } from 'lucide-react';
+import { LogOut, Brain } from 'lucide-react';
 
 export default function StudentLayout() {
   const navigate = useNavigate();
@@ -28,8 +28,10 @@ export default function StudentLayout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <BookOpen className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-slate-800">E-Learning</span>
+              <Brain className="h-7 w-7 text-blue-600" />
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                E-learning Psikotest
+              </span>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-slate-600">Halo, {user.name}</span>

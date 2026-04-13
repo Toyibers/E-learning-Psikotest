@@ -20,7 +20,7 @@ export default function AdminModuleDetail() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [text, setText] = useState('');
-  const [options, setOptions] = useState<string[]>(['', '', '', '']);
+  const [options, setOptions] = useState<string[]>(['', '', '', '', '']);
   const [correct_answer, setCorrectAnswer] = useState<number>(0);
   
   // Modal state
@@ -111,7 +111,12 @@ export default function AdminModuleDetail() {
   const startEdit = (q: Question) => {
     setEditingId(q.id);
     setText(q.text);
-    setOptions([...q.options]);
+    // Ensure we have 5 options even if the question was saved with fewer
+    const currentOptions = [...q.options];
+    while (currentOptions.length < 5) {
+      currentOptions.push('');
+    }
+    setOptions(currentOptions);
     setCorrectAnswer(q.correct_answer);
     setIsAdding(true);
   };
@@ -120,7 +125,7 @@ export default function AdminModuleDetail() {
     setIsAdding(false);
     setEditingId(null);
     setText('');
-    setOptions(['', '', '', '']);
+    setOptions(['', '', '', '', '']);
     setCorrectAnswer(0);
   };
 
@@ -146,7 +151,7 @@ export default function AdminModuleDetail() {
 
       const lines = block.split('\n').map(l => l.trim()).filter(l => l);
       let questionText = '';
-      let opts: string[] = ['', '', '', ''];
+      let opts: string[] = ['', '', '', '', ''];
       let correctAnswer = -1;
 
       lines.forEach(line => {
@@ -161,12 +166,15 @@ export default function AdminModuleDetail() {
           opts[2] = line.substring(2).trim();
         } else if (lowerLine.startsWith('d.')) {
           opts[3] = line.substring(2).trim();
+        } else if (lowerLine.startsWith('e.')) {
+          opts[4] = line.substring(2).trim();
         } else if (lowerLine.startsWith('jawaban:')) {
           const ans = line.substring(8).trim().toUpperCase();
           if (ans === 'A') correctAnswer = 0;
           else if (ans === 'B') correctAnswer = 1;
           else if (ans === 'C') correctAnswer = 2;
           else if (ans === 'D') correctAnswer = 3;
+          else if (ans === 'E') correctAnswer = 4;
         }
       });
 
@@ -284,6 +292,7 @@ A. 2
 B. 3
 C. 4
 D. 5
+E. 6
 Jawaban: A
 
 Soal: Ibukota Indonesia?
@@ -291,6 +300,7 @@ A. Bandung
 B. Jakarta
 C. Surabaya
 D. Medan
+E. Bali
 Jawaban: B`}
                 </pre>
               </div>

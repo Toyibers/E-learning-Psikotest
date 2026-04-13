@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { getCurrentUser, setCurrentUser } from '@/src/lib/store';
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, BookOpen, Users, User, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Brain, BookOpen, Users, User, LogOut, Menu, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
 export default function AdminLayout() {
@@ -42,8 +42,10 @@ export default function AdminLayout() {
       {/* Mobile Navbar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-30">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-6 w-6 text-blue-600" />
-          <span className="text-xl font-bold text-slate-800">Admin Panel</span>
+          <Brain className="h-6 w-6 text-blue-600" />
+          <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            E-learning Psikotest
+          </span>
         </div>
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -67,8 +69,10 @@ export default function AdminLayout() {
         isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="h-16 flex items-center px-6 border-b border-slate-200">
-          <BookOpen className="h-6 w-6 text-blue-600 mr-2" />
-          <span className="text-xl font-bold text-slate-800">Admin Panel</span>
+          <Brain className="h-6 w-6 text-blue-600 mr-2" />
+          <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            E-learning Psikotest
+          </span>
         </div>
         
         {/* Admin Profile Snippet in Sidebar */}
