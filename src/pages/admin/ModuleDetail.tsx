@@ -143,13 +143,14 @@ export default function AdminModuleDetail() {
   };
 
   const parseQuestions = (content: string) => {
-    const blocks = content.split(/\n\s*\n/);
+    // Split by double newline or multiple newlines to handle different OS formats
+    const blocks = content.split(/\n\s*\n|\r\n\s*\r\n/);
     const results: any[] = [];
 
     blocks.forEach(block => {
       if (!block.trim()) return;
 
-      const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+      const lines = block.split(/\n|\r\n/).map(l => l.trim()).filter(l => l);
       let questionText = '';
       let opts: string[] = ['', '', '', '', ''];
       let correctAnswer = -1;
@@ -170,17 +171,19 @@ export default function AdminModuleDetail() {
           opts[4] = line.substring(2).trim();
         } else if (lowerLine.startsWith('jawaban:')) {
           const ans = line.substring(8).trim().toUpperCase();
-          if (ans === 'A') correctAnswer = 0;
-          else if (ans === 'B') correctAnswer = 1;
-          else if (ans === 'C') correctAnswer = 2;
-          else if (ans === 'D') correctAnswer = 3;
-          else if (ans === 'E') correctAnswer = 4;
+          if (ans.includes('A')) correctAnswer = 0;
+          else if (ans.includes('B')) correctAnswer = 1;
+          else if (ans.includes('C')) correctAnswer = 2;
+          else if (ans.includes('D')) correctAnswer = 3;
+          else if (ans.includes('E')) correctAnswer = 4;
         }
       });
 
-      if (questionText && opts.every(o => o) && correctAnswer !== -1) {
+      // Allow questions with at least 2 options (though 5 is preferred)
+      // and ensure question text and correct answer exist
+      const filledOptions = opts.filter(o => o !== '');
+      if (questionText && filledOptions.length >= 2 && correctAnswer !== -1) {
         results.push({
-          module_id: module?.id,
           text: questionText,
           options: opts,
           correct_answer: correctAnswer
@@ -188,26 +191,39 @@ export default function AdminModuleDetail() {
       }
     });
 
+    if (results.length === 0 && content.trim().length > 0) {
+      alert('Peringatan: Tidak ada soal yang berhasil di-parse. Pastikan format file .txt sudah benar (Soal:, A., B., C., D., E., Jawaban:).');
+    }
+
     setParsedQuestions(results);
   };
 
   const handleBulkSave = async () => {
-    if (parsedQuestions.length === 0) return;
+    if (parsedQuestions.length === 0 || !id) return;
     setIsBulkSaving(true);
     try {
+      // Ensure module_id is explicitly set for all questions to prevent orphaned data
+      const questionsToInsert = parsedQuestions.map(q => ({
+        ...q,
+        module_id: id
+      }));
+
       const { error } = await supabase
         .from('questions')
-        .insert(parsedQuestions);
+        .insert(questionsToInsert);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
       
       setIsImporting(false);
       setParsedQuestions([]);
       setImportText('');
       loadModule();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Bulk save failed:', error);
-      alert('Gagal mengimpor soal. Pastikan format benar.');
+      alert(`Gagal mengimpor soal. Error: ${error?.message || 'Pastikan format benar.'}`);
     } finally {
       setIsBulkSaving(false);
     }
@@ -251,7 +267,12 @@ export default function AdminModuleDetail() {
       />
 
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/admin/modules')} className="text-slate-500">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => module.class_id ? navigate(`/admin/classes/${module.class_id}`) : navigate('/admin/modules')} 
+          className="text-slate-500"
+        >
           <ArrowLeft className="h-4 w-4 mr-2" /> Kembali
         </Button>
         <div>

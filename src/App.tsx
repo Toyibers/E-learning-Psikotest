@@ -12,9 +12,11 @@ import AdminLayout from './components/layout/AdminLayout';
 // Pages
 import LoginRegister from './pages/auth/LoginRegister';
 import Home from './pages/student/Home';
+import StudentClassDetail from './pages/student/ClassDetail';
 import ModuleDetail from './pages/student/ModuleDetail';
 import Dashboard from './pages/admin/Dashboard';
-import Modules from './pages/admin/Modules';
+import Classes from './pages/admin/Classes';
+import ClassDetail from './pages/admin/ClassDetail';
 import AdminModuleDetail from './pages/admin/ModuleDetail';
 import Students from './pages/admin/Students';
 import Profile from './pages/admin/Profile';
@@ -28,13 +30,15 @@ export default function App() {
         {/* Student Routes */}
         <Route path="/" element={<StudentLayout />}>
           <Route index element={<Home />} />
+          <Route path="class/:classId" element={<StudentClassDetail />} />
           <Route path="module/:id" element={<ModuleDetail />} />
         </Route>
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
-          <Route path="modules" element={<Modules />} />
+          <Route path="modules" element={<Classes />} />
+          <Route path="classes/:classId" element={<ClassDetail />} />
           <Route path="modules/:id" element={<AdminModuleDetail />} />
           <Route path="students" element={<Students />} />
           <Route path="profile" element={<Profile />} />

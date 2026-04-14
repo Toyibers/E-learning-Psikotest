@@ -32,7 +32,7 @@ export default function AdminLayout() {
 
   const menuItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Modul', path: '/admin/modules', icon: BookOpen },
+    { name: 'Kelas', path: '/admin/modules', icon: BookOpen },
     { name: 'Siswa', path: '/admin/students', icon: Users },
     { name: 'Profil Admin', path: '/admin/profile', icon: User },
   ];

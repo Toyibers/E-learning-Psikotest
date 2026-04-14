@@ -20,12 +20,21 @@ export interface Question {
 
 export interface Module {
   id: string;
+  class_id: string;
   title: string;
   description: string;
   duration_minutes: number;
   attempt_limit?: number;
   questions?: Question[];
   created_at: string;
+}
+
+export interface Class {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  modules?: Module[];
 }
 
 export interface AttemptDetail {
@@ -66,6 +75,24 @@ export const setCurrentUser = (user: User | null) => {
 };
 
 // Supabase Data Fetching
+export const fetchClasses = async () => {
+  const { data, error } = await supabase
+    .from('classes')
+    .select('*, modules(*, questions(*))');
+  if (error) throw error;
+  return data as Class[];
+};
+
+export const fetchClassById = async (id: string) => {
+  const { data, error } = await supabase
+    .from('classes')
+    .select('*, modules(*, questions(*))')
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data as Class;
+};
+
 export const fetchModules = async () => {
   const { data, error } = await supabase
     .from('modules')

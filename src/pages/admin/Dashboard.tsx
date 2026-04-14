@@ -1,25 +1,28 @@
 import { useState, useEffect } from 'react';
-import { fetchModules, fetchUsers, fetchAttempts, Module, User, Attempt } from '@/src/lib/store';
+import { fetchModules, fetchUsers, fetchAttempts, fetchClasses, Module, User, Attempt, Class } from '@/src/lib/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/Card';
-import { BookOpen, Users, Activity, Trophy } from 'lucide-react';
+import { BookOpen, Users, Activity, Trophy, FolderOpen } from 'lucide-react';
 
 export default function Dashboard() {
   const [modules, setModules] = useState<Module[]>([]);
   const [students, setStudents] = useState<User[]>([]);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [modulesData, usersData, attemptsData] = await Promise.all([
+        const [modulesData, usersData, attemptsData, classesData] = await Promise.all([
           fetchModules(),
           fetchUsers(),
-          fetchAttempts()
+          fetchAttempts(),
+          fetchClasses()
         ]);
         setModules(modulesData);
         setStudents(usersData.filter(u => u.role === 'student'));
         setAttempts(attemptsData);
+        setClasses(classesData);
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
       } finally {
@@ -54,7 +57,16 @@ export default function Dashboard() {
     <div className="space-y-8">
       <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Dashboard Admin</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="bg-white border-0 shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-slate-500">Total Kelas</CardTitle>
+            <FolderOpen className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{classes.length}</div>
+          </CardContent>
+        </Card>
         <Card className="bg-white border-0 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">Total Modul</CardTitle>
@@ -75,7 +87,7 @@ export default function Dashboard() {
         </Card>
         <Card className="bg-white border-0 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Total Attempt Soal</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-500">Total Attempt</CardTitle>
             <Activity className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
